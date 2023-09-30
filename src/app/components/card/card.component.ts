@@ -1,4 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
+import { PokemonData } from 'src/app/models/pokemonData';
 import { PokemonService } from 'src/app/services/pokemon.service';
 
 @Component({
@@ -7,9 +8,15 @@ import { PokemonService } from 'src/app/services/pokemon.service';
   styleUrls: ['./card.component.css']
 })
 export class CardComponent implements OnInit {
-  name: string = ""
-  stats: string = ""
-  photoPath: string[] = []
+  pokemon: PokemonData = {
+    id: 0,
+    name: "",
+    sprites: {
+      front_default: ""
+    },
+    types: []
+  }
+
 
   constructor(
     private service: PokemonService
@@ -17,6 +24,23 @@ export class CardComponent implements OnInit {
 
   }
   ngOnInit(): void {
-    this.service.getPokemon("pikachu");
+    
+  }
+
+  getPokemon(serachName:string){
+    this.service.getPokemon(serachName).subscribe(
+      {
+        next: (res) => {
+          this.pokemon = {
+            id: res.id,
+            name: res.name,
+            sprites: res.sprites,
+            types: res.types
+          }
+          console.log(this.pokemon);
+        },
+        error: (err) => console.log('notfound')
+      }
+    );
   }
 }
